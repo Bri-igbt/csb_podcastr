@@ -85,11 +85,11 @@ const CreatePodcast = () => {
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-5">
                   <FormLabel className="text-16 font-bold text-white-1">
-                    Username
+                    Title
                   </FormLabel>
                   <FormControl>
                     <Input
-                      className="input-class focus-visible:ring-orange-1"
+                      className="input-class focus-visible:ring-offset-orange-1"
                       placeholder="CBStack Podcast"
                       {...field}
                     />
@@ -107,15 +107,15 @@ const CreatePodcast = () => {
               <Select onValueChange={(value) => setVoiceType(value)}>
                 <SelectTrigger
                   className={cn(
-                    "text-16 w-full border-none text-gray-1 bg-black-1"
+                    "text-16 w-full border-none text-gray-1 bg-black-1 focus-visible:ring-offset-orange-1 "
                   )}
                 >
                   <SelectValue
                     placeholder="Select AI Voice"
-                    className="placeholder:text-gray-1"
+                    className="placeholder:text-gray-1 "
                   />
                 </SelectTrigger>
-                <SelectContent className="text-16 border-none text-bold bg-black-1 focus:ring-orange-1">
+                <SelectContent className="text-16 border-none text-bold bg-black-1 focus-visible:ring-offset-orange-1">
                   {voiceCategory.map((category) => (
                     <SelectItem
                       key={category}
@@ -143,7 +143,7 @@ const CreatePodcast = () => {
                   </FormLabel>
                   <FormControl>
                     <Textarea
-                      className="input-class focus-visible:ring-orange-1"
+                      className="input-class focus-visible:ring-offset-orange-1"
                       placeholder="Write a short podcast description"
                       {...field}
                     />
@@ -155,34 +155,33 @@ const CreatePodcast = () => {
           </div>
 
           <div className="flex flex-col pt-10">
-              <GeneratePodcast 
-                setAudioStorageId={setAudioStorageId}
-                setAudio={setAudioUrl}
-                voiceType={voiceType}
-                audio={audioUrl}
-                voicePrompt={voicePrompt}
-                setVoicePrompt={setVoicePrompt}
-                setAudioDuration={setAudioDuration}
-              
-              />
+            <GeneratePodcast
+              setAudioStorageId={setAudioStorageId}
+              setAudio={setAudioUrl}
+              voiceType={voiceType!}
+              audio={audioUrl}
+              voicePrompt={voicePrompt}
+              setVoicePrompt={setVoicePrompt}
+              setAudioDuration={setAudioDuration}
+            />
 
-              <GenerateThumbnail />
+            <GenerateThumbnail />
 
-              <div className="mt-10 w-full">
-                <Button 
-                  type="submit" 
-                  className="text-16 w-full bg-orange-1 py-4 text-white-1 transition-all duration-500 font-extrabold hover:bg-black-1"
-                >
-                  {isSumbitting ? (
-                    <>
-                      Submitting
-                    <Loader size={20} className="animate-spin ml-2"/>
-                    </>
-                  ) : (
-                    'Submit & Publish Podcast'
-                  )}
-                </Button>
-              </div>
+            <div className="mt-10 w-full">
+              <Button
+                type="submit"
+                className="text-16 w-full bg-orange-1 py-4 text-white-1 transition-all duration-500 font-extrabold hover:bg-black-1"
+              >
+                {isSumbitting ? (
+                  <>
+                    Submitting
+                    <Loader size={20} className="animate-spin ml-2" />
+                  </>
+                ) : (
+                  "Submit & Publish Podcast"
+                )}
+              </Button>
+            </div>
           </div>
         </form>
       </Form>
