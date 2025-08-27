@@ -32,6 +32,9 @@ import GeneratePodcast from "@/components/GeneratePodcast"
 import GenerateThumbnail from "@/components/GenerateThumbnail"
 import { Loader } from "lucide-react"
 import { Id } from "@/convex/_generated/dataModel"
+import { toast } from "sonner";
+import { useMutation } from "convex/react"
+import { api } from "@/convex/_generated/api"
 
 const voiceCategory = ['alloy', 'shimmer','nova','echo','fable','onyx']
 
@@ -42,7 +45,9 @@ const formSchema = z.object({
 
 const CreatePodcast = () => {
   const [imagePrompt, setImagePrompt] = useState('');
-  const [imageStorageId, setImageStorageId] = useState(null);
+  const [imageStorageId, setImageStorageId] = useState<Id<"_storage"> | null>(
+    null
+  );
   const [imageUrl, setImageUrl] = useState('');
 
   const [audioStorageId, setAudioStorageId] = useState<Id<'_storage'> | null>(null);
@@ -53,6 +58,7 @@ const CreatePodcast = () => {
   const [voicePrompt, setVoicePrompt] = useState('');
 
   const [isSumbitting, setIsSumbitting] = useState(false);
+  const createPodcast = useMutation(api.podcast.createPodcast)
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -64,10 +70,33 @@ const CreatePodcast = () => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setIsSumbitting(true);
+      if(!audioUrl || !imageUrl || !voiceType) {
+        toast("Please generate audio and image");
+        setIsSumbitting(false);
+        throw new Error("Please generate audio and image")
+      }
+
+      await createPodcast({
+        podcastTitle: values.podcastTitle,
+        podcastDescription: values.podcastDescription,
+        audioUrl,
+        imageUrl,
+        voiceType,
+        imagePrompt,
+        voicePrompt,
+        views: 0,
+        audioDuration,
+        audioStorageId: audioStorageId!,
+        imageStorageId: imageStorageId!,
+      });
+    } catch (error) {
+      console.log(error);
+      toast('Error sumbmitting the podcast') 
+    }
+    setIsSumbitting(false);
   }
 
   return (
@@ -165,7 +194,13 @@ const CreatePodcast = () => {
               setAudioDuration={setAudioDuration}
             />
 
-            <GenerateThumbnail />
+            <GenerateThumbnail
+              setImage={setImageUrl}
+              setImageStorageId={setImageStorageId}
+              image={imageUrl}
+              imagePrompt={imagePrompt}
+              setImagePrompt={setImagePrompt}
+            />
 
             <div className="mt-10 w-full">
               <Button
